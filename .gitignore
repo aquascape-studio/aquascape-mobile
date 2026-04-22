@@ -1,0 +1,10 @@
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+lib/_gen/
+.DS_Store
+pnpm-lock.yaml
+.npmrc
+*.log
