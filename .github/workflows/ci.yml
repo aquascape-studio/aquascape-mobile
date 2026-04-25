@@ -9,6 +9,9 @@ on:
 # they've each succeeded at least once, replace this shape job with the
 # real one below.
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   shape:
     runs-on: ubuntu-latest
