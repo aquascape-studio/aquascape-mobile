@@ -19,7 +19,7 @@ export default function SettingsScreen() {
       </View>
       <View style={styles.row}>
         <Text style={styles.rowLabel}>Language</Text>
-        <Text style={styles.rowValue}>English · 中文</Text>
+        <Text style={styles.rowValue}>English</Text>
       </View>
       <View style={styles.row}>
         <Text style={styles.rowLabel}>Appearance</Text>
