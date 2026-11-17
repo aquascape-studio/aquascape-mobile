@@ -18,20 +18,16 @@ export default function PlantsScreen() {
       keyExtractor={(p) => p.id}
       ListHeaderComponent={
         <Text style={styles.heading}>
-          {plants.length} species · English + 中文
+          {plants.length} species
         </Text>
       }
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       renderItem={({ item }) => {
         const english = item.commonNames.en[0] ?? item.scientificName;
-        const chinese = item.commonNames.zh[0] ?? '';
         return (
           <View style={styles.card}>
             <Text style={styles.title}>{english}</Text>
-            <Text style={styles.latin}>
-              {item.scientificName}
-              {chinese ? ` · ${chinese}` : ''}
-            </Text>
+            <Text style={styles.latin}>{item.scientificName}</Text>
             <Text style={styles.meta}>
               {item.difficulty.label.toUpperCase()} · {item.growthForm}
             </Text>
