@@ -1,19 +1,35 @@
 name: ci
 on:
-  pull_request:
-  push:
-    branches: [main]
-
-# NOTE: full CI is blocked until @aquascape/{ui,botany} are published to
-# GitHub Packages. Those repos' publish.yml push on push-to-main. Once
-# they've each succeeded at least once, replace this shape job with the
-# real one below.
+  # Owner rule (2026-11-27): no CI on push or pull_request. The daily routine starts this workflow
+  # (workflow_dispatch on main) once per repo after integration; a second run only after a fix.
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
+  daily-cap:
+    # Owner rule (2026-11-27): CI runs only when the daily routine starts it, at most 2 runs per repo per
+    # Pacific day (a run, then one more after a fix). A third run that day stops here, before any work.
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    steps:
+      - name: At most 2 CI runs per repo per day
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          START=$(TZ=America/Los_Angeles date -d "$(TZ=America/Los_Angeles date +%F) 00:00" +%s)
+          N=$(gh api "repos/${{ github.repository }}/actions/workflows/ci.yml/runs?per_page=50" \
+            --jq "[.workflow_runs[] | select(.id != ${{ github.run_id }}) | select((.created_at | fromdateiso8601) >= $START)] | length")
+          echo "earlier CI runs today (Pacific): $N"
+          if [ "$N" -ge 2 ]; then
+            echo "::error::Daily CI cap reached (2 runs per repo per day). Fix locally and run tomorrow, or ask the owner."
+            exit 1
+          fi
+
   shape:
+    needs: daily-cap
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
